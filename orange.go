@@ -10,12 +10,14 @@ type orange struct {
 	taste []string
 }
 
+// NewOrange creates a orange object associate with taste
 func NewOrange() Fruit {
 	return &orange{
 		taste: []string{"sour", "juicy"},
 	}
 }
 
+// GetExpireTime returns expiring time for orange
 func (o *orange) GetExpireTime() time.Duration {
 	return orangeExpiredTime
 }
