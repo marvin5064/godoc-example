@@ -1,0 +1,12 @@
+language: go
+
+go:
+  - master
+script: make test
+
+notifications:
+  email:
+    recipients:
+      - marvin5064@gmail.com
+    on_success: never
+on_failure: always
