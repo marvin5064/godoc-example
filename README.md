@@ -104,7 +104,9 @@ open http://localhost:8080/pkg/github.com/marvin5064/godoc-example/
 ```
 
 ### Reference
-
+- https://github.com/golang/go/issues/2381
+- https://groups.google.com/forum/#!topic/golang-nuts/rzdX87PojAo
+- https://forum.golangbridge.org/t/running-go-doc-only-for-my-code/2832
 
 ### PS
 
