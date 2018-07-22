@@ -20,4 +20,4 @@ dep:
 docker-build:
 	docker build . -t $(APPNAME)/v1
 docker-run: docker-build
-	docker run -it -v $(CURRENT_DIR):/tmp $(APPNAME)/v1
+	docker run -p 6060:6060 -it $(APPNAME)/v1
