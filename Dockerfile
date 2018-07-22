@@ -1,7 +1,7 @@
 # Use an official Golang runtime as a parent image
 FROM golang:1.10.3
 
-# env setup for reusebility
+# env setup for reusability
 ENV APP_NAME=godoc-example
 ENV WORKING_DIR=$GOPATH/src/github.com/marvin5064/$APP_NAME
 
