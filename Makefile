@@ -16,6 +16,8 @@ dep:
 	@dep ensure -update
 
 # docker cmd below
-.PHONY:  docker-build
+.PHONY:  docker-build docker-run
 docker-build:
 	docker build . -t $(APPNAME)/v1
+docker-run: docker-build
+	docker run -it -v $(CURRENT_DIR):/tmp $(APPNAME)/v1

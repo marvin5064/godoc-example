@@ -10,3 +10,5 @@ WORKDIR $WORKING_DIR
 
 # Copy the current directory contents into the container at current directory
 ADD . .
+
+CMD ./gen-doc.sh
