@@ -16,8 +16,11 @@ dep:
 	@dep ensure -update
 
 # docker cmd below
-.PHONY:  docker-build docker-run
+.PHONY:  docker-build docker-run docker-gen-docs
 docker-build:
 	docker build . -t $(APPNAME)/v1
 docker-run: docker-build
 	docker run -p 6060:6060 -it $(APPNAME)/v1
+docker-gen-docs: docker-build
+	rm -rf localhost:6060
+	docker run --entrypoint="./gen-docs.sh" -it -v $(CURRENT_DIR):/tmp $(APPNAME)/v1
