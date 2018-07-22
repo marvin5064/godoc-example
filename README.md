@@ -1,7 +1,9 @@
 # How to Generate Customized Go Documents for Private Repository
+
 ## Get Started in Local Machine
 
-### godoc
+### Godoc
+
 the simple tool, provided by golang community, will help you get local customized go documents in a nutshell
 ```
 godoc -http=:6060
@@ -15,7 +17,9 @@ Of course, the detail of documentation has to be done by you inline with code. T
 However, the documents generated will include all directories and subdirectories under `$GOPATH/src`, most of them may not be **necessary**
 
 ## Docker
+
 ### Dockerfile
+
 ```
 # Use an official Golang runtime as a parent image
 FROM golang:1.10.3
@@ -32,7 +36,9 @@ ADD . .
 
 CMD godoc -http=:6060
 ```
+
 ### Build & Run
+
 ```
 docker build . \
     -t godoc-example/v1 # giving a tag for reference
@@ -42,9 +48,71 @@ docker run \
 ```
 for simplicity, the cmd has been stored in `Makefile`, you can simply trigger `make docker-run` to execute it
 
-### Check it out:
+### Check it out
+
 after above steps, we can see all documentations about golang native library and current repository
 ```
 open http://localhost:6060/pkg
 open http://localhost:6060/pkg/github.com/marvin5064/godoc-example/
 ```
+
+## Extensive
+Let s further exclude the golang native library from the documentation
+
+After some research, `godoc` no yet support specific file documentation, there are some tricks for it
+1. Generate static web files for the repository you are working with, here we using docker with a simple script to generate it
+```
+#!/bin/bash
+CURRENT_PKG=`go list -e`
+
+# run a godoc server
+godoc -http=:6060 & DOC_PID=$!
+
+# Wait for the server to start
+until curl -sSf "http://localhost:6060/pkg/$CURRENT_PKG/" > /dev/null
+do
+    sleep 1
+done
+sleep 1
+
+# recursive fetch entire web including CSS & JS
+# turn off robots check, otherwise might get blocked with details in `robots.txt` file
+# only get the directories we are looking for
+wget -r -p \
+    -e robots=off \
+    --include-directories="/lib/godoc,/pkg/$CURRENT_PKG,/src/$CURRENT_PKG" \
+    --exclude-directories="/pkg/$CURRENT_PKG/vendor,/src/$CURRENT_PKG/vendor" \
+    "http://localhost:6060/pkg/$CURRENT_PKG/"
+
+# Stop the godoc server
+kill -9 $DOC_PID
+
+# all file will be generated into `localhost:6060` folder, hence we move them out from docker to local machine
+mv localhost:6060 /tmp
+```
+you can simply achieve this by `Makefile`
+```
+make docker-gen-docs
+```
+2. Serve it out by nodejs http server package as a static web page
+```
+make docker-gen-docs-server
+```
+3. Check it out!
+```
+open http://localhost:8080/pkg/github.com/marvin5064/godoc-example/
+```
+
+### Reference
+
+
+### PS
+
+#### Improvements
+
+- use NGINX as a replacement of normal node server 
+    - NGINX is native for static website serving
+    - Leverage http rules out of application/server side
+- use docker-compose
+    - hence we can run on docs generation & http server on same container
+    - if you run on a CD/CI process, different container do different job will be better

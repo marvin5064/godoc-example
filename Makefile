@@ -16,7 +16,7 @@ dep:
 	@dep ensure -update
 
 # docker cmd below
-.PHONY:  docker-build docker-run docker-gen-docs
+.PHONY:  docker-build docker-run docker-gen-docs docker-gen-docs-server
 docker-build:
 	docker build . -t $(APPNAME)/v1
 docker-run: docker-build
@@ -24,3 +24,6 @@ docker-run: docker-build
 docker-gen-docs: docker-build
 	rm -rf localhost:6060
 	docker run --entrypoint="./gen-docs.sh" -it -v $(CURRENT_DIR):/tmp $(APPNAME)/v1
+docker-gen-docs-server: docker-gen-docs
+	docker build . -f js-server.Dockerfile -t $(APPNAME)-js-docs-server/v1
+	docker run -p 8080:8080 -it $(APPNAME)-js-docs-server/v1
