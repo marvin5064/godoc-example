@@ -6,6 +6,5 @@ WORKDIR /app
 RUN npm install http-server -g
 # Copy the current directory contents into the container at current directory
 ADD localhost:6060 server
-RUN cd server
 
-CMD http-server
+CMD http-server server -p 8080
